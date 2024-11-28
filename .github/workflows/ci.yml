@@ -1,34 +1,31 @@
-name: Python Tests
-
+name: Print Software Versions
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: main
 
 jobs:
-  test:
+  PrintLanguageVersions:
     runs-on: ubuntu-latest
-
     steps:
-    # Крок 1: Завантаження репозиторію
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Print Node.js Version
+        run: node --version
+      - name: Print npm Version
+        run: npm --version
+      - name: Print OS Details
+        run: uname -a
 
-    # Крок 2: Встановлення Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'  # Виберіть потрібну версію Python
-
-    # Крок 3: Встановлення залежностей
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-
-    # Крок 4: Запуск тестів
-    - name: Run tests
-      run: |
-        pytest
+  PrintDBMSVersions:
+    runs-on: ubuntu-24.04
+    needs: [PrintLanguageVersions]
+    steps:
+      - name: Install SQLite3
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sqlite3
+          echo "SQLite3 installation complete"
+      - name: Check if SQLite3 is installed
+        run: |
+          which sqlite3
+          sqlite3 --version
+      - name: Print SQLite Version
+        run: sqlite3 --version
